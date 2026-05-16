@@ -10,17 +10,29 @@ pipeline {
     }
 
     stages {
+        stage('Clean') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
         stage('Build') {
             steps {
+                sh 'npm cache clean --force'
                 sh 'rm -rf node_modules package-lock.json'
-                sh 'npm install'
+                sh 'npm install --include=optional'
             }
         }
 
         stage('Test') {
             steps {
-                sh './jenkins/scripts/test.sh'
+                sh 'npm test'
             }
         }
 
