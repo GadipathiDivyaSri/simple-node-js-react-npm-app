@@ -7,14 +7,27 @@ pipeline {
 
     environment {
         CI = 'true'
+        npm_config_optional = 'true'
     }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Build') {
             steps {
-                sh 'rm -rf node_modules package-lock.json'
-                sh 'npm install'
-                sh 'npm install @rolldown/binding-linux-x64-gnu --save-optional'
+                sh 'rm -rf node_modules'
+                sh 'npm cache verify'
+                sh 'npm ci --include=optional'
             }
         }
 
